@@ -55,7 +55,7 @@
             display: flex;
             gap: 20px;
             align-items: center;
-            height: 60px; /* Reserves space for buttons */
+            height: 60px;
         }
 
         .valentine-btn {
@@ -69,23 +69,21 @@
         }
 
         #yesBtn {
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50;
             color: white;
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-            transition: transform 0.3s ease; /* Smooth growing */
-            z-index: 2; /* Keeps YES on top */
+            transition: transform 0.3s ease;
+            z-index: 2;
         }
 
         #yesBtn:hover { transform: scale(1.1); }
 
         #noBtn {
-            background-color: #f44336; /* Red */
+            background-color: #f44336;
             color: white;
             box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
             position: absolute; 
-            left: 140px; /* Starts next to YES */
-            
-            /* THIS IS THE FIX: Makes the movement smooth! */
+            left: 140px;
             transition: all 0.4s ease; 
         }
 
@@ -148,6 +146,7 @@
             transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* UPDATED: Matches your file "US.jpg" */
         .couple-photo {
             width: 100%;
             height: 150px;
@@ -311,7 +310,7 @@
             <h2 style="color: #d00000; margin-top: 0;">My Message For You</h2>
             <div class="long-message">
                 <p>
-                    My Lovee lovee,<br><br>
+                    My Dearest Yara,<br><br>
                     I wanted to write something special for you aside from the card. <br>
                     You make my world brighter just by being in it. <br>
                     I promise to always be your umbrella on rainy days.<br><br>
@@ -344,54 +343,47 @@
         const yesBtn = document.getElementById('yesBtn');
         const introScreen = document.getElementById('introScreen');
         const msgBtn = document.getElementById('openMsgBtn');
+        const audio = document.getElementById('bgMusic');
 
         let yesScale = 1; 
 
-        // Function to make button run away smoothly
         function moveButton() {
-            // Get screen dimensions minus button size to keep it visible
             const maxWidth = window.innerWidth - noBtn.offsetWidth - 20;
             const maxHeight = window.innerHeight - noBtn.offsetHeight - 20;
-
-            // Generate random positions within the screen
             const randomX = Math.random() * maxWidth;
             const randomY = Math.random() * maxHeight;
             
-            // Apply new position (CSS transition makes it slide)
             noBtn.style.position = 'absolute';
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
             
-            // Make YES bigger to encourage her!
             yesScale += 0.1;
             yesBtn.style.transform = `scale(${yesScale})`;
         }
 
-        // Run away when she tries to touch or hover
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('touchstart', moveButton); 
 
-        // If she manages to click it, it VANISHES
         noBtn.addEventListener('click', () => {
-            noBtn.style.display = 'none'; // Gone forever
-            yesScale += 0.5; // YES gets huge
+            noBtn.style.display = 'none'; 
+            yesScale += 0.5; 
             yesBtn.style.transform = `scale(${yesScale})`;
         });
 
         // --- LOGIC FOR THE "YES" BUTTON ---
         yesBtn.addEventListener('click', () => {
+            // FIX: Play music immediately when she says YES!
+            audio.play().catch(error => console.log("Music play failed:", error));
+            
             introScreen.style.opacity = '0';
             setTimeout(() => {
                 introScreen.style.display = 'none';
-                msgBtn.style.display = 'flex'; // Show corner button
+                msgBtn.style.display = 'flex'; 
             }, 800);
         });
 
-        // --- ENVELOPE & MUSIC LOGIC ---
+        // --- ENVELOPE LOGIC ---
         const container = document.getElementById('envelopeContainer');
-        const audio = document.getElementById('bgMusic');
-        
-        // Modal Logic
         const modal = document.getElementById('messageModal');
         const closeBtn = document.getElementById('closeMsgBtn');
 
@@ -406,13 +398,11 @@
             container.classList.toggle('open');
             
             if(!isOpen) {
-                audio.play();
+                // Keep playing music if it started, or try start again
+                audio.play().catch(e => console.log(e)); 
                 for(let i = 0; i < 25; i++) {
                     setTimeout(createHeart, i * 80);
                 }
-            } else {
-                audio.pause();
-                audio.currentTime = 0;
             }
         });
 
